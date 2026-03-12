@@ -1,0 +1,4 @@
+$searcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://yourdomain.com")
+$searcher.Filter = "(objectClass=computer)"
+$computers = $searcher.FindAll()
+$computers | ForEach-Object { $_.Properties.name }
