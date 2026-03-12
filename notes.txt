@@ -26,3 +26,18 @@ $cred = New-Object System.Management.Automation.PSCredential ($username,$secpass
         $shares | Select @{N="Host";E={$ip}},Name
     } catch {}
 }
+
+
+
+
+##
+$user="DOMAIN\user"
+$pass="Password123!"
+
+1..254 | %{
+$ip="192.168.1.$_"
+
+cmd /c "net use \\$ip /user:$user $pass >nul 2>&1 && echo ==== $ip ==== && net view \\$ip"
+
+cmd /c "net use \\$ip /delete >nul 2>&1"
+}
