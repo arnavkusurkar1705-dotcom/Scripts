@@ -13,3 +13,16 @@ $computers | ForEach-Object { $_.Properties.name }
 #Get all installed apps
 Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* , HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select DisplayName,InstallLocation,DisplayIcon | ?{$_.DisplayName}
 
+$username = "DOMAIN\username"
+$password = "Password123!"
+
+$secpass = ConvertTo-SecureString $password -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential ($username,$secpass)
+
+1..254 | ForEach-Object {
+    $ip = "192.168.1.$_"
+    try {
+        $shares = Get-SmbShare -CimSession (New-CimSession -ComputerName $ip -Credential $cred)
+        $shares | Select @{N="Host";E={$ip}},Name
+    } catch {}
+}
