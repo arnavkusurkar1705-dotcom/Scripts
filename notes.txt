@@ -1,0 +1,15 @@
+#Get all Users
+net user /domain
+
+#Get all computers 
+$searcher = New-Object System.DirectoryServices.DirectorySearcher([ADSI]"LDAP://yourdomain.com")
+$searcher.Filter = "(objectClass=computer)"
+$computers = $searcher.FindAll()
+$computers | ForEach-Object { $_.Properties.name }
+
+#Get Network Equivalent
+([adsisearcher]"(objectClass=computer)").FindAll() | %{$n=$_.Properties.name;try{[System.Net.Dns]::GetHostAddresses($n) | %{"$n $_"}}catch{}}
+
+#Get all installed apps
+Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* , HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select DisplayName,InstallLocation,DisplayIcon | ?{$_.DisplayName}
+
