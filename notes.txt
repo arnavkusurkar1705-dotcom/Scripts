@@ -13,6 +13,8 @@ $computers | ForEach-Object { $_.Properties.name }
 #Get all installed apps
 Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* , HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select DisplayName,InstallLocation,DisplayIcon | ?{$_.DisplayName}
 
+Get-CimInstance Win32_Service | Select Name,PathName
+
 $username = "DOMAIN\username"
 $password = "Password123!"
 
