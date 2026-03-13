@@ -1,3 +1,10 @@
+# Enumerate computers with delegation configured
+$searcher = New-Object DirectoryServices.DirectorySearcher
+$searcher.Filter = "(&(objectClass=computer)(msDS-AllowedToActOnBehalfOfOtherIdentity=*))"
+$searcher.PageSize = 1000
+$searcher.FindAll() | ForEach-Object { $_.Properties["name"] }
+
+# Enumerate all user SPNs (Kerberoasting targets) — native LDAP, no Impacket
 $searcher2 = New-Object DirectoryServices.DirectorySearcher
 $searcher2.Filter = "(&(objectClass=user)(servicePrincipalName=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
 $searcher2.FindAll() | ForEach-Object {
