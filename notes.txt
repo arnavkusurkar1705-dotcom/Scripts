@@ -57,3 +57,28 @@ $pass="password"
         net use \\$ip\IPC$ /delete 2>$null | Out-Null
     }
 }
+
+
+###
+$user="DOMAIN\user"
+$pass="password"
+$subnet="192.168.1"
+
+1..254 | %{
+    $ip="$subnet.$_"
+
+    try{
+        $c = New-Object Net.Sockets.TcpClient($ip,445)
+
+        net use \\$ip\IPC$ $pass /user:$user /persistent:no 2>$null | Out-Null
+        $shares = net view \\$ip 2>$null | Select-String "Disk"
+
+        if($shares){
+            "$ip"
+            $shares
+        }
+
+        net use \\$ip\IPC$ /delete 2>$null | Out-Null
+        $c.Close()
+    }catch{}
+}
